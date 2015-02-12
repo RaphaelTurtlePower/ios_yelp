@@ -14,8 +14,17 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    MainViewController *mvc  = [[MainViewController alloc] init];
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:mvc];
+    CGFloat width = self.window.frame.size.width;
     
-    self.window.rootViewController = [[MainViewController alloc] init];
+    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 44.0)];
+    searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    UIView *searchBarView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 44.0)];
+    [searchBarView addSubview:searchBar];
+    mvc.navigationItem.titleView = searchBarView;
+  
+    self.window.rootViewController = navigation;
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];

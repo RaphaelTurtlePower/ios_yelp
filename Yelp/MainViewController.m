@@ -8,16 +8,19 @@
 
 #import "MainViewController.h"
 #import "YelpClient.h"
+#import "YelpTableViewCell.h"
+#import "UIImageView+AFNetworking.h"
 
 NSString * const kYelpConsumerKey = @"vxKwwcR_NMQ7WaEiQBK_CA";
 NSString * const kYelpConsumerSecret = @"33QCvh5bIF5jIHR5klQr7RtBDhQ";
 NSString * const kYelpToken = @"uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV";
 NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
-@interface MainViewController ()
+@interface MainViewController () <UITableViewDelegate, UITableViewDataSource>
 
+@property (weak, nonatomic) IBOutlet UITableView *yelpList;
 @property (nonatomic, strong) YelpClient *client;
-
+@property (nonatomic, strong) NSArray *results;
 @end
 
 @implementation MainViewController
@@ -30,6 +33,8 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
         self.client = [[YelpClient alloc] initWithConsumerKey:kYelpConsumerKey consumerSecret:kYelpConsumerSecret accessToken:kYelpToken accessSecret:kYelpTokenSecret];
         
         [self.client searchWithTerm:@"Thai" success:^(AFHTTPRequestOperation *operation, id response) {
+            self.results = response[@"businesses"];
+            [self.yelpList reloadData];
             NSLog(@"response: %@", response);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"error: %@", [error description]);
@@ -42,6 +47,11 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.yelpList.delegate = self;
+    self.yelpList.dataSource = self;
+    
+    
+    [self.yelpList registerNib:[UINib nibWithNibName:@"YelpTableViewCell" bundle:nil] forCellReuseIdentifier:@"YelpTableViewCell"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -49,5 +59,22 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+
+
+#pragma Table methods
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+ return self.results.count;
+}
+
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    YelpTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"YelpTableViewCell"];
+    
+    NSDictionary *business = self.results[indexPath.row];
+    [cell.photoImageView setImageWithURL: [NSURL URLWithString:business[@"image_url"]]];
+    return cell;
+}
+
 
 @end
