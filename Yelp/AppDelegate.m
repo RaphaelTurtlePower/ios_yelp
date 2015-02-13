@@ -16,14 +16,9 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     MainViewController *mvc  = [[MainViewController alloc] init];
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:mvc];
-    CGFloat width = self.window.frame.size.width;
+    navigation.navigationBar.barTintColor = [UIColor redColor];
     
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 44.0)];
-    searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    UIView *searchBarView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 44.0)];
-    [searchBarView addSubview:searchBar];
-    mvc.navigationItem.titleView = searchBarView;
-  
+    
     self.window.rootViewController = navigation;
     
     self.window.backgroundColor = [UIColor whiteColor];

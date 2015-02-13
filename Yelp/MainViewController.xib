@@ -7,8 +7,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController">
             <connections>
-                <outlet property="view" destination="sd3-pf-Ugr" id="RIg-K5-dYD"/>
-                <outlet property="yelpList" destination="sd3-pf-Ugr" id="D3S-pt-o7f"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="Mpn-2b-dfd"/>
+                <outlet property="yelpList" destination="sd3-pf-Ugr" id="Zno-dO-d4Y"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -16,12 +16,18 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="sd3-pf-Ugr">
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="sd3-pf-Ugr">
                     <rect key="frame" x="0.0" y="-8" width="320" height="568"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </tableView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="sd3-pf-Ugr" secondAttribute="bottom" constant="8" id="B78-n0-61J"/>
+                <constraint firstItem="sd3-pf-Ugr" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="QcU-HS-TXS"/>
+                <constraint firstItem="sd3-pf-Ugr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="VYf-Rg-AVb"/>
+                <constraint firstAttribute="trailing" secondItem="sd3-pf-Ugr" secondAttribute="trailing" id="rSM-8Q-ijF"/>
+            </constraints>
         </view>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
