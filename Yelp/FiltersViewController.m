@@ -8,13 +8,29 @@
 
 #import "FiltersViewController.h"
 #import "SwitchCell.h"
+#import "SegmentedControlTableViewCell.h"
+@interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate, SegmentedControlCellDelegate>
 
-@interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, readonly) NSDictionary *filters;
 @property (nonatomic, strong) NSArray *categories;
 @property (nonatomic, strong) NSMutableSet *selectedCategories;
+@property (nonatomic, strong) NSMutableSet *selectedDeals;
+@property (nonatomic, strong) NSMutableSet *selectedDistance;
+@property (nonatomic, strong) NSMutableSet *selectedSortedBy;
+
+@property (nonatomic, strong) NSArray *sections;
+
+@property (nonatomic, strong) NSArray *dealsChoices;
+
+@property (nonatomic, strong) NSArray *distanceChoices;
+@property (nonatomic, strong) NSArray *distanceValues;
+
+
+@property (nonatomic, strong) NSArray *sortByChoices;
+@property (nonatomic, strong) NSArray *sortByValues;
 -(void) initCategories;
+
 @end
 
 @implementation FiltersViewController
@@ -23,24 +39,34 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self){
         self.selectedCategories = [NSMutableSet set];
+        self.selectedDeals = [NSMutableSet set];
+        self.selectedDistance = [NSMutableSet set];
+        self.selectedSortedBy = [NSMutableSet set];
         [self initCategories];
     }
     return self;
 }
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.sections = @[@"Deals", @"Sort By", @"Radius (miles)", @"Category" ];
+    self.sortByChoices = @[@"Best Match", @"Distance", @"Rating"];
+    self.sortByValues = @[@"0", @"1", @"2"];
+    self.dealsChoices = @[@"On", @"Off"];
+    self.distanceChoices = @[@"1", @"3", @"5", @"10", @"20"];
+    self.distanceValues = @[@"1609",@"4827", @"8046", @"16092", @"32184"];
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.tableView registerNib:[UINib nibWithNibName:@"SwitchCell" bundle:nil] forCellReuseIdentifier:@"SwitchCell"];
+    [self.tableView registerNib:[UINib nibWithNibName:@"SegmentedControlTableViewCell" bundle:nil] forCellReuseIdentifier:@"SegmentedControlTableViewCell"];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelButton)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Apply" style:UIBarButtonItemStylePlain target:self action:@selector(onApplyButton)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(onApplyButton)];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -49,17 +75,11 @@
 }
 
 #pragma mark - Table view data source
--(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+/*-(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.categories.count;
 }
+*/
 
--(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    SwitchCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SwitchCell"];
-    cell.titleLabel.text = self.categories[indexPath.row][@"name"];
-    cell.delegate = self;
-    cell.on = [self.selectedCategories containsObject:self.categories[indexPath.row]];
-    return cell;
-}
 
 #pragma mark - switch cell delegate methods
 - (void) switchCell: (SwitchCell*) cell didUpdateValue:(BOOL)value{
@@ -70,76 +90,35 @@
         [self.selectedCategories removeObject: self.categories[indexPath.row]];
     }
 }
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:  forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
-    return cell;
+
+- (void) segmentedControlTableViewCell: (SegmentedControlTableViewCell *) cell didUpdateValue: (NSString*) segmentValue {
+    NSIndexPath* path = [self.tableView indexPathForCell:cell];
+    NSInteger section = path.section;
+    if(section == 0){
+        NSInteger index = [self.dealsChoices indexOfObject: segmentValue];
+        NSString* value = (index == 0) ? @"true" : @"false";
+        if([self.selectedDeals containsObject: value]){
+            [self.selectedDeals removeObject: value];
+        }else{
+            [self.selectedDeals addObject: value];
+        }
+    }else if(section == 1){
+        NSInteger index = [self.sortByChoices indexOfObject: segmentValue];
+        NSString *value = self.sortByValues[index];
+        if([self.selectedSortedBy containsObject: value ]){
+            [self.selectedSortedBy removeObject: value];
+        }else{
+            [self.selectedSortedBy addObject: value];        }
+    }else if(section == 2){
+        NSInteger index = [self.distanceChoices indexOfObject: segmentValue];
+        NSString *value = self.distanceValues[index];
+        if([self.selectedDistance containsObject: value]){
+            [self.selectedDistance removeObject: value];
+        }else{
+            [self.selectedDistance addObject: value];
+        }
+    }
 }
-*/
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Table view delegate
-
-// In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:<#@"Nib name"#> bundle:nil];
-    
-    // Pass the selected object to the new view controller.
-    
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 
 #pragma mark - Private methods
 
@@ -153,6 +132,23 @@
             [filters setObject:categoryFilter forKey:@"category_filter"];
         }
     }
+    if(self.selectedSortedBy.count > 0){
+        NSArray* array = [[self.selectedSortedBy allObjects] copy];
+        NSString* sortedByFilter = [array componentsJoinedByString:@","];
+        [filters setObject: sortedByFilter forKey:@"sort"];
+    }
+    
+    if(self.selectedDistance.count > 0){
+        NSArray* array = [[self.selectedDistance allObjects] copy];
+        NSString* distanceFilter = [array componentsJoinedByString:@","];
+        [filters setObject: distanceFilter forKey:@"radius_filter"];
+    }
+    
+    if(self.selectedDeals.count > 0){
+        NSArray* array = [[self.selectedDeals allObjects] copy];
+        NSString* dealsFilter = [array componentsJoinedByString:@","];
+        [filters setObject: dealsFilter forKey:@"deals_filter"];
+    }
     return filters;
 }
 
@@ -164,6 +160,58 @@
     [self.delegate filtersViewController:self didChangeFilters:self.filters];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+#pragma TableView methods
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    if(section<3){
+       return 1;   //distance
+    }else{
+        return self.categories.count; //categories
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+}
+
+-(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    int section = indexPath.section;
+    if(section<3){
+        SegmentedControlTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SegmentedControlTableViewCell"];
+        if(section == 0){
+            [cell setSelectionArray:self.dealsChoices];
+        }else if(section == 1){
+            [cell setSelectionArray:self.sortByChoices];
+        }else{
+            [cell setSelectionArray:self.distanceChoices];
+        }
+        cell.delegate = self;
+        return cell;
+    }else{
+    SwitchCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SwitchCell"];
+    cell.titleLabel.text = self.categories[indexPath.row][@"name"];
+    cell.delegate = self;
+    cell.on = [self.selectedCategories containsObject:self.categories[indexPath.row]];
+        return cell;
+    }
+}
+
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [self.sections objectAtIndex:section];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return [self.sections count];
+}
+
+
+
+#pragma Picker Functions
 
 -(void) initCategories{
     self.categories = @[@{@"name" : @"Afghan", @"code": @"afghani" },
@@ -336,4 +384,6 @@
                             @{@"name" : @"Wraps", @"code": @"wraps" },
                             @{@"name" : @"Yugoslav", @"code": @"yugoslav" }];
 }
+
+
 @end

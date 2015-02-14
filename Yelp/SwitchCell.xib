@@ -16,6 +16,9 @@
                 <subviews>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cP5-GX-T6c">
                         <rect key="frame" x="263" y="6" width="51" height="31"/>
+                        <color key="backgroundColor" red="0.9740184441576063" green="1" blue="0.95756096869233753" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" red="1" green="0.038298387369690268" blue="0.056479362460799432" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="onTintColor" red="1" green="0.038298387369999999" blue="0.056479362460000002" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
                             <action selector="switchValueChanged:" destination="KGk-i7-Jjw" eventType="valueChanged" id="gwM-Zm-YXg"/>
                         </connections>

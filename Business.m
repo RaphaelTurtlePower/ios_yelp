@@ -18,8 +18,17 @@
         self.categories = [categoryNames componentsJoinedByString:@", "];
         self.name = dictionary[@"name"];
         self.imageUrl = dictionary[@"image_url"];
-        NSString *street = [dictionary valueForKeyPath:@"location.address"][0];
-        NSString *neighborhood = [dictionary valueForKeyPath:@"location.neighborhoods"][0];
+        NSArray *streetAddress =[dictionary valueForKeyPath:@"location.address"];
+         NSString *street = @"";
+        if([streetAddress count] > 0){
+            street = streetAddress[0];
+        }
+       
+        NSString *neighborhood = @"";
+        NSArray *nb = [dictionary valueForKeyPath:@"location.neighborhoods"];
+        if([nb count] > 0){
+            neighborhood = nb[0];
+        }
         self.address = [NSString stringWithFormat:@"%@, %@", street, neighborhood];
         self.numReviews = [dictionary[@"review_count"] integerValue];
         self.ratingImageUrl = dictionary[@"rating_img_url"];

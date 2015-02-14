@@ -80,8 +80,13 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
     self.client = [[YelpClient alloc] initWithConsumerKey:kYelpConsumerKey consumerSecret:kYelpConsumerSecret accessToken:kYelpToken accessSecret:kYelpTokenSecret];
     [self.client searchWithTerm:query params:params success:^(AFHTTPRequestOperation *operation, id response) {
         NSArray *businessesArray = response[@"businesses"];
-        self.businesses = [Business businessesWithDictionaries:businessesArray];
-        [self.yelpList reloadData];
+        if([businessesArray count] > 0){
+            self.businesses = [Business businessesWithDictionaries:businessesArray];
+            [self.yelpList reloadData];
+        }else{
+            self.businesses = [NSArray new];
+            [self.yelpList reloadData];
+        }
         NSLog(@"response: %@", response);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"error: %@", [error description]);
@@ -114,6 +119,7 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
     FiltersViewController *vc = [[FiltersViewController alloc] init];
     vc.delegate = self;
     UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:vc];
+    nvc.navigationBar.barTintColor = [UIColor redColor];
     [self presentViewController:nvc animated:YES completion:nil];
 }
 
