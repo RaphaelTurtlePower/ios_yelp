@@ -51,7 +51,10 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
     self.yelpList.estimatedRowHeight = 85;
     self.title=@"Yelp";
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(onFilterButton)];
-
+    [leftBarButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                                     [UIColor whiteColor], NSForegroundColorAttributeName,
+                                           nil] 
+                                 forState:UIControlStateNormal];
     self.navigationItem.leftBarButtonItem = leftBarButton;
     
     self.searchBar = [UISearchBar new];

@@ -17,6 +17,7 @@
     MainViewController *mvc  = [[MainViewController alloc] init];
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:mvc];
     navigation.navigationBar.barTintColor = [UIColor redColor];
+    [navigation.navigationItem.leftBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName] forState:UIControlStateNormal ];
     
     
     self.window.rootViewController = navigation;
